@@ -12,7 +12,8 @@ public class CrudFrame extends JFrame {
 
     JPanel sidebarPanel, contentPanel;
     ImageIcon iconLogo, iconHome, iconPacientes, iconLogOut, iconSeta, iconLine;
-    Label labelTitle, labelIconLine;
+    JLabel labelTitle;
+    JLabel labelIconLine;
     JButton btnCadastrar, btnSeta, btnHome, btnPacientes, btnLogOut;
     JLabel labeliconLogo, labeliconHome, labeliconPacientes, labeliconLogOut;
 
@@ -27,8 +28,7 @@ public class CrudFrame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);
-        // Using null layout for absolute positioning, but consider using Layout Managers
-        // for more flexible UIs.
+
         setLayout(null);
         getContentPane().setBackground(UIvariables.BACKGROUND_RECEPCIONISTA_FRAME);
 
@@ -46,42 +46,150 @@ public class CrudFrame extends JFrame {
         } else {
             System.err.println("Icone do logo não encontrado!");
         }
+        //-------------------------------------------------------------------------------
 
         // Initialize contentPanel ONCE
+
         contentPanel = new JPanel();
         contentPanel.setBounds(380, 42, 1100, 670); // Adjusted x-coordinate to be next to sidebar
         contentPanel.setBackground(UIvariables.WHITE_COLOR); // Or BACKGROUND_PANEL_BLUE as per your last setup
         contentPanel.setLayout(null);
         add(contentPanel); // Add contentPanel to the JFrame
 
-        // Initialize sidebarPanel ONCE
+        labelTitle = new JLabel("Nome");
+        labelTitle.setBounds(125, 30, 400, 60);
+        labelTitle.setForeground(UIvariables.BLACK_COLOR);
+        labelTitle.setFont(UIvariables.FONT_TEXT);
+        contentPanel.add(labelTitle);
+
+        labelTitle = new JLabel("Numero de telefone");
+        labelTitle.setBounds(350, 30, 400, 60);
+        labelTitle.setForeground(UIvariables.BLACK_COLOR);
+        labelTitle.setFont(UIvariables.FONT_TEXT);
+        contentPanel.add(labelTitle);
+
+        labelTitle = new JLabel("Data Nascimento");
+        labelTitle.setBounds(670, 30, 400, 60);
+        labelTitle.setForeground(UIvariables.BLACK_COLOR);
+        labelTitle.setFont(UIvariables.FONT_TEXT);
+        contentPanel.add(labelTitle);
+
+        labelTitle = new JLabel("Ações");
+        labelTitle.setBounds(970, 30, 400, 60);
+        labelTitle.setForeground(UIvariables.BLACK_COLOR);
+        labelTitle.setFont(UIvariables.FONT_TEXT);
+        contentPanel.add(labelTitle);
+
+        iconLine = new ImageIcon(getClass().getResource("../img/assets/icon-line.png"));
+        labelIconLine = new JLabel(iconLine);
+        labelIconLine.setBounds(-60, 100, 1019, 32);
+        labeliconPacientes = new JLabel(iconLine);  //não sei pq caralhos ta "pacientes" mas ta funcionando, deixa assim!
+        contentPanel.add(labelIconLine);
+
+        iconLine = new ImageIcon(getClass().getResource("../img/assets/icon-line.png"));
+        labelIconLine = new JLabel(iconLine);
+        labelIconLine.setBounds(150, 100, 1019, 32);
+        labeliconPacientes = new JLabel(iconLine);  //não sei pq caralhos ta "pacientes" mas ta funcionando, deixa assim!
+        contentPanel.add(labelIconLine);
+
+        //-------------------------------------------------------------------------------
+
+
+
+        //-------------------------------------------------------------------------------
+
+        //sidebarPanel
         sidebarPanel = new JPanel();
         sidebarPanel.setBounds(100, 42, SIDEBAR_WIDTH_EXPANDED, 670);
         sidebarPanel.setBackground(UIvariables.COLOR_SIDEBAR);
-        sidebarPanel.setLayout(null); // Using null layout for sidebar as well
-        add(sidebarPanel); // Add sidebarPanel directly to the JFrame
+        sidebarPanel.setLayout(null);
+        add(sidebarPanel);
 
-        // Load and scale the logo for the sidebar
-        // Make sure the path is correct: "../img/img-logo.png" implies it's one level up from 'ui' and then in 'img'
-        // If it's directly in 'img' relative to the root of your source folder, then "/img/img-logo.png" is correct.
+
+        iconPacientes = new ImageIcon(getClass().getResource("../img/assets/icon-pacientes.png"));
+        labeliconPacientes = new JLabel(iconPacientes);
+        labeliconPacientes.setBounds(58, 250, 32, 32);
+        sidebarPanel.add(labeliconPacientes); // Add to sidebarPanel
+
+        btnPacientes = new JButton("Cadastro");
+        btnPacientes.setBounds(23, 235, 246, 65); // Adjust x if needed to align with icon
+        btnPacientes.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
+        btnPacientes.setForeground(UIvariables.WHITE_COLOR);
+        btnPacientes.setBorderPainted(false);
+        btnPacientes.setContentAreaFilled(false);
+        btnPacientes.setFocusPainted(false);
+        btnPacientes.setOpaque(false);
+        sidebarPanel.add(btnPacientes);
+
+        btnPacientes.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnPacientes.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                btnPacientes.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA_HOVER);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnPacientes.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
+            }
+        });
+
+
+
+
+        //-------------------------------------------------------------------------------
+
+
+        iconLogOut = new ImageIcon(getClass().getResource("../img/assets/icon-logOut.png"));
+        labeliconLogOut = new JLabel(iconLogOut);
+        labeliconLogOut.setBounds(58, 460, 32, 32);
+
+        //-------------------------------------------------------------------------------
+
         iconLogo = new ImageIcon(getClass().getResource("/img/img-logo.png"));
         if (iconLogo.getImageLoadStatus() == MediaTracker.ERRORED) {
             System.err.println("Error loading sidebar logo image: /img/img-logo.png");
         }
         Image scalediconLogo = iconLogo.getImage().getScaledInstance(54, 54, Image.SCALE_SMOOTH);
         labeliconLogo = new JLabel(new ImageIcon(scalediconLogo));
-        // Set bounds relative to sidebarPanel
-        labeliconLogo.setBounds( (SIDEBAR_WIDTH_EXPANDED - 54) / 2, 34, 54, 54); // Centered horizontally
 
-        // Add the logo to the sidebarPanel
+        labeliconLogo.setBounds( (SIDEBAR_WIDTH_EXPANDED - 54) / 2, 34, 54, 54);
+
+
         sidebarPanel.add(labeliconLogo);
 
 
-        // --- Home Button and Icon ---
+        // Home Button and Icon
         iconHome = new ImageIcon(getClass().getResource("../img/assets/icon-home.png"));
         labeliconHome = new JLabel(iconHome);
         labeliconHome.setBounds(58, 170, 32, 32);
         sidebarPanel.add(labeliconHome); // Add to sidebarPanel
+        sidebarPanel.add(labeliconLogOut);
+
+        btnLogOut = new JButton("Sair");
+        btnLogOut.setBounds(56, 455, 120, 40); // Adjust x if needed to align with icon
+        btnLogOut.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
+        btnLogOut.setForeground(UIvariables.WHITE_COLOR);
+        btnLogOut.setBorderPainted(false);
+        btnLogOut.setContentAreaFilled(false);
+        btnLogOut.setFocusPainted(false);
+        btnLogOut.setOpaque(false);
+        sidebarPanel.add(btnLogOut);
+
+        btnLogOut.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnLogOut.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                btnLogOut.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA_HOVER);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnLogOut.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
+            }
+        });
+
+        //-------------------------------------------------------------------------------
 
         btnHome = new JButton("Home");
         btnHome.setBounds(70, 170, 120, 40); // Adjust x if needed to align with icon
@@ -106,19 +214,8 @@ public class CrudFrame extends JFrame {
             }
         });
 
-        // --- Pacientes Button and Icon ---
-        iconPacientes = new ImageIcon(getClass().getResource("../img/assets/icon-pacientes.png"));
-        labeliconPacientes = new JLabel(iconPacientes);
-        labeliconPacientes.setBounds(58, 250, 32, 32);
-        sidebarPanel.add(labeliconPacientes); // Add to sidebarPanel
-
-        // You'll likely need a btnPacientes too, similar to btnHome, and add it to sidebarPanel
-
-        // Remove these lines as they were causing issues
-        // add(contentPanel); // Already added above
-        // contentPanel.add(sidebarPanel); // sidebarPanel should be a direct child of JFrame, not contentPanel
-        // sidebarPanel.add(labeliconLogo); // This is good, just make sure it's done once and correctly positioned
     }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

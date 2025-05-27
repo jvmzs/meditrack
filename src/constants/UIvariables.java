@@ -18,6 +18,7 @@ public class UIvariables {
 
 
     //fontes
+    public static final Font FONT_TEXT = new Font("Poppins", Font.BOLD, 20);
     public static final Font FONT_LOGO = new Font("Poppins", Font.BOLD, 24);
     public static final Font FONT_INPUT = new Font("Poppins", Font.PLAIN,24);
     public static final Font FONT_BUTTON = new Font("Poppins", Font.BOLD,26);
