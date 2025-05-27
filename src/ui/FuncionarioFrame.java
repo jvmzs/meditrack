@@ -4,21 +4,22 @@ import constants.UIvariables;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.net.URL;
-import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.text.MaskFormatter;
-import java.text.ParseException;
+import java.awt.event.MouseAdapter;
+import java.awt.Color;
+import javax.swing.JPanel;
+import java.awt.event.MouseEvent;
+import java.net.URL;
+import javax.swing.text.MaskFormatter; // Importação necessária
 
 public class FuncionarioFrame extends JFrame {
     //declarando as variaveis
     JPanel  painelMaior, sidebarPanel, rightPainel ;
     JLabel textoTitulo, labelNome, labelSobrenome, labelCPF,  labelNuTelefone, labelDataNasc, labeliconLogo, labeliconHome, labeliconPacientes, labeliconLogOut;;
     JButton botaoCadastrar, btnSeta, btnHome, btnPacientes, btnLogOut;;
-    JTextField campoTNome, campoTSobrenome, campoCPF, campoNuTelefone, campoDataNasc;
+    JTextField campoTNome, campoTSobrenome, campoCPF, campoNuTelefone; // campoDataNasc removido daqui
+    JFormattedTextField campoDataNasc; // Agora é um JFormattedTextField
     ImageIcon iconLogo, iconHome, iconPacientes, iconLogOut, iconSeta, iconLine;
 
 
@@ -40,7 +41,13 @@ public class FuncionarioFrame extends JFrame {
         setLayout(null);
         getContentPane().setBackground(UIvariables.BACKGROUND_RECEPCIONISTA_FRAME);
 
-
+        URL iconUrl = getClass().getResource("../img/img-logo.png");
+        if (iconUrl != null) {
+            iconLogo = new ImageIcon(iconUrl);
+            setIconImage(iconLogo.getImage());
+        } else {
+            System.err.println("Icone do logo não encontrado!");
+        }
 
         //criação do painel maior que vai conter os outros dois paineis e labels
         painelMaior = new JPanel();
@@ -235,45 +242,53 @@ public class FuncionarioFrame extends JFrame {
         labelDataNasc.setForeground(UIvariables.BLACK_COLOR);
         labelDataNasc.setFont(UIvariables.FONT_INPUT);
 
+
         //campo texto data de nascimento
-        campoDataNasc = new JTextField();
-        campoDataNasc.setBounds(0, 478, 330, 40);
-        campoDataNasc.setForeground(UIvariables.BLACK_COLOR);
-        campoDataNasc.setFont(UIvariables.FONT_INPUT);
+        try {
+            MaskFormatter dateMask = new MaskFormatter("##/##/####"); // DD/MM/YYYY
+            dateMask.setPlaceholderCharacter('_');
+            campoDataNasc = new JFormattedTextField(dateMask);
+            campoDataNasc.setBounds(0, 478, 330, 40);
+            campoDataNasc.setForeground(UIvariables.BLACK_COLOR);
+            campoDataNasc.setFont(UIvariables.FONT_INPUT);
+            campoDataNasc.setFocusLostBehavior(JFormattedTextField.PERSIST); // Mantém o formato ao perder o foco
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+        }
 
 
-        JCheckBox checkMedico = new JCheckBox("Médico");
-        checkMedico.setBounds(500, 420, 200, 40);
-        checkMedico.setFont(UIvariables.FONT_INPUT);
-        checkMedico.setForeground(UIvariables.BLACK_COLOR);
-        checkMedico.setBackground(UIvariables.WHITE_COLOR);
+        JRadioButton radioMedico = new JRadioButton("Médico");
+        radioMedico.setBounds(500, 420, 200, 40);
+        radioMedico.setFont(UIvariables.FONT_INPUT);
+        radioMedico.setForeground(UIvariables.BLACK_COLOR);
+        radioMedico.setBackground(UIvariables.WHITE_COLOR);
 
-        JCheckBox checkEnfermeiro = new JCheckBox("Enfermeiro");
-        checkEnfermeiro.setBounds(500, 460, 200, 40);
-        checkEnfermeiro.setFont(UIvariables.FONT_INPUT);
-        checkEnfermeiro.setForeground(UIvariables.BLACK_COLOR);
-        checkEnfermeiro.setBackground(UIvariables.WHITE_COLOR);
+        JRadioButton radioEnfermeiro = new JRadioButton("Enfermeiro");
+        radioEnfermeiro.setBounds(500, 460, 200, 40);
+        radioEnfermeiro.setFont(UIvariables.FONT_INPUT);
+        radioEnfermeiro.setForeground(UIvariables.BLACK_COLOR);
+        radioEnfermeiro.setBackground(UIvariables.WHITE_COLOR);
 
-        JCheckBox checkEnfermeiroTriagem = new JCheckBox("Enf. Triagem");
-        checkEnfermeiroTriagem.setBounds(500, 500, 250, 40);
-        checkEnfermeiroTriagem.setFont(UIvariables.FONT_INPUT);
-        checkEnfermeiroTriagem.setForeground(UIvariables.BLACK_COLOR);
-        checkEnfermeiroTriagem.setBackground(UIvariables.WHITE_COLOR);
+        JRadioButton radioEnfermeiroTriagem = new JRadioButton("Enf. Triagem");
+        radioEnfermeiroTriagem.setBounds(500, 500, 250, 40);
+        radioEnfermeiroTriagem.setFont(UIvariables.FONT_INPUT);
+        radioEnfermeiroTriagem.setForeground(UIvariables.BLACK_COLOR);
+        radioEnfermeiroTriagem.setBackground(UIvariables.WHITE_COLOR);
 
-        JCheckBox checkRecepcionista = new JCheckBox("Recepcionista");
-        checkRecepcionista.setBounds(500, 540, 200, 40);
-        checkRecepcionista.setFont(UIvariables.FONT_INPUT);
-        checkRecepcionista.setForeground(UIvariables.BLACK_COLOR);
-        checkRecepcionista.setBackground(UIvariables.WHITE_COLOR);
+        JRadioButton radioRecepcionista = new JRadioButton("Recepcionista");
+        radioRecepcionista.setBounds(500, 540, 200, 40);
+        radioRecepcionista.setFont(UIvariables.FONT_INPUT);
+        radioRecepcionista.setForeground(UIvariables.BLACK_COLOR);
+        radioRecepcionista.setBackground(UIvariables.WHITE_COLOR);
 
 
 
         // criando o ButtonGroup para permitir apenas um checkbox selecionado por vez
         ButtonGroup grupoCheckBoxes = new ButtonGroup();
-        grupoCheckBoxes.add(checkMedico);
-        grupoCheckBoxes.add(checkEnfermeiro);
-        grupoCheckBoxes.add(checkEnfermeiroTriagem);
-        grupoCheckBoxes.add(checkRecepcionista);
+        grupoCheckBoxes.add(radioMedico);
+        grupoCheckBoxes.add(radioEnfermeiro);
+        grupoCheckBoxes.add(radioEnfermeiroTriagem);
+        grupoCheckBoxes.add(radioRecepcionista);
 
 
 
@@ -316,10 +331,10 @@ public class FuncionarioFrame extends JFrame {
         rightPainel.add(labelDataNasc);
         rightPainel.add(campoDataNasc);
         rightPainel.add(botaoCadastrar);
-        rightPainel.add(checkMedico);
-        rightPainel.add(checkEnfermeiro);
-        rightPainel.add(checkEnfermeiroTriagem);
-        rightPainel.add(checkRecepcionista);
+        rightPainel.add(radioMedico);
+        rightPainel.add(radioEnfermeiro);
+        rightPainel.add(radioEnfermeiroTriagem);
+        rightPainel.add(radioRecepcionista);
         sidebarPanel.add(labeliconLogo);
         sidebarPanel.add(labeliconHome);
         sidebarPanel.add(btnHome);
@@ -429,6 +444,4 @@ public class FuncionarioFrame extends JFrame {
     public static void main(String[]args){
         new FuncionarioFrame();
     }
-
-
 }
