@@ -116,6 +116,15 @@ public class Crud extends JFrame {
         configurarBotaoSidebar(btnPacientes);
         sidebarPanel.add(btnPacientes);
 
+        btnPacientes.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                RecepcionistaFrame RecepcionistaFrame = new RecepcionistaFrame();
+                RecepcionistaFrame.setVisible(true);
+
+            }
+        });
+
+
         iconLogOut = new ImageIcon(getClass().getResource("/img/assets/icon-logOut.png"));
         labeliconLogOut = new JLabel(iconLogOut);
         labeliconLogOut.setBounds(58, 460, 32, 32);
@@ -184,7 +193,7 @@ public class Crud extends JFrame {
                 contentPanel.add(lblNome);
 
                 JLabel lblTelefone = new JLabel(telefone);
-                lblTelefone.setBounds(250, y, 200, 40);
+                lblTelefone.setBounds(300, y, 200, 40);
                 lblTelefone.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
                 contentPanel.add(lblTelefone);
 

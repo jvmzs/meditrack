@@ -121,6 +121,14 @@ public class RecepcionistaFrame extends JFrame {
         btnPacientes.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
         btnPacientes.setForeground(UIvariables.WHITE_COLOR);
 
+        btnPacientes.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Crud Crud = new Crud();
+                Crud.setVisible(true);
+
+            }
+        });
+
         //remover a estilização do botão
         btnPacientes.setBorderPainted(false); // Remove a borda
         btnPacientes.setContentAreaFilled(false); // Remove o preenchimento
