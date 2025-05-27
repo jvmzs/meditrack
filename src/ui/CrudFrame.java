@@ -27,13 +27,15 @@ public class CrudFrame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);
+        // Using null layout for absolute positioning, but consider using Layout Managers
+        // for more flexible UIs.
         setLayout(null);
         getContentPane().setBackground(UIvariables.BACKGROUND_RECEPCIONISTA_FRAME);
 
         UIManager.put("OptionPane.messageFont", new Font("Poppins", Font.BOLD, 15));
         UIManager.put("OptionPane.messageForeground", UIvariables.BLACK_COLOR);
         UIManager.put("OptionPane.background", Color.WHITE);
-        UIManager.put("Panel.background", Color.WHITE); // necessário para o fundo
+        UIManager.put("Panel.background", Color.WHITE);
         UIManager.put("Button.background", UIvariables.BACKGROUND_PANEL_BLUE);
         UIManager.put("Button.foreground", UIvariables.WHITE_COLOR);
 
@@ -44,69 +46,52 @@ public class CrudFrame extends JFrame {
         } else {
             System.err.println("Icone do logo não encontrado!");
         }
+
+        // Initialize contentPanel ONCE
         contentPanel = new JPanel();
-        contentPanel.setBounds(100, 42, 1300, 670);
-        contentPanel.setBackground(UIvariables.WHITE_COLOR);
+        contentPanel.setBounds(380, 42, 1100, 670); // Adjusted x-coordinate to be next to sidebar
+        contentPanel.setBackground(UIvariables.WHITE_COLOR); // Or BACKGROUND_PANEL_BLUE as per your last setup
         contentPanel.setLayout(null);
+        add(contentPanel); // Add contentPanel to the JFrame
 
+        // Initialize sidebarPanel ONCE
         sidebarPanel = new JPanel();
-        sidebarPanel.setBounds(0, 0, 280, 670);
+        sidebarPanel.setBounds(100, 42, SIDEBAR_WIDTH_EXPANDED, 670);
         sidebarPanel.setBackground(UIvariables.COLOR_SIDEBAR);
-        sidebarPanel.setLayout(null);
+        sidebarPanel.setLayout(null); // Using null layout for sidebar as well
+        add(sidebarPanel); // Add sidebarPanel directly to the JFrame
 
-        // Corrigido: usando variável de instância sem redeclarar localmente
-        iconLogo = new ImageIcon(getClass().getResource("../img/img-logo.png"));
+        // Load and scale the logo for the sidebar
+        // Make sure the path is correct: "../img/img-logo.png" implies it's one level up from 'ui' and then in 'img'
+        // If it's directly in 'img' relative to the root of your source folder, then "/img/img-logo.png" is correct.
+        iconLogo = new ImageIcon(getClass().getResource("/img/img-logo.png"));
+        if (iconLogo.getImageLoadStatus() == MediaTracker.ERRORED) {
+            System.err.println("Error loading sidebar logo image: /img/img-logo.png");
+        }
         Image scalediconLogo = iconLogo.getImage().getScaledInstance(54, 54, Image.SCALE_SMOOTH);
         labeliconLogo = new JLabel(new ImageIcon(scalediconLogo));
-        labeliconLogo.setBounds(114, 34, 54, 54);
+        // Set bounds relative to sidebarPanel
+        labeliconLogo.setBounds( (SIDEBAR_WIDTH_EXPANDED - 54) / 2, 34, 54, 54); // Centered horizontally
 
-        contentPanel= new JPanel();
-        contentPanel.setBounds(100, 42, 285, 670);
-        contentPanel.setBackground(UIvariables.COLOR_SIDEBAR);
-        contentPanel.setLayout(null);
-        add(contentPanel);
+        // Add the logo to the sidebarPanel
+        sidebarPanel.add(labeliconLogo);
 
-        contentPanel = new JPanel();
-        contentPanel.setBounds(100, 42, 1300, 670);
-        contentPanel.setBackground(UIvariables.WHITE_COLOR);
-        contentPanel.setLayout(null);
-        add(contentPanel);
 
-        contentPanel= new JPanel();
-        contentPanel.setBounds(100, 42, 1300, 670);
-        contentPanel.setBackground(UIvariables.BACKGROUND_PANEL_BLUE);
-        contentPanel.setLayout(null);
-        add(contentPanel);
-
-        iconLogo = new ImageIcon(getClass().getResource("/img/img-logo.png"));
-        Image Logo = iconLogo.getImage().getScaledInstance(54, 54, Image.SCALE_SMOOTH);
-        labeliconLogo = new JLabel(new ImageIcon(Logo));
-
-        sidebarPanel = new JPanel();
-        sidebarPanel.setBounds(100, 42, 280, 670); // mesma posição Y e altura do content
-        sidebarPanel.setBackground(UIvariables.COLOR_SIDEBAR);
-        sidebarPanel.setLayout(null);
-        add(sidebarPanel);
-
-        // Corrigido aqui também, remove redeclaração local JLabel
-        iconLogo = new ImageIcon(getClass().getResource("../img/img-logo.png"));
-        scalediconLogo = iconLogo.getImage().getScaledInstance(54, 54, Image.SCALE_SMOOTH);
-        labeliconLogo = new JLabel(new ImageIcon(scalediconLogo));
-        labeliconLogo.setBounds(114, 34, 54, 54);
-
+        // --- Home Button and Icon ---
         iconHome = new ImageIcon(getClass().getResource("../img/assets/icon-home.png"));
-        JLabel labeliconHome = new JLabel(iconHome);
+        labeliconHome = new JLabel(iconHome);
         labeliconHome.setBounds(58, 170, 32, 32);
+        sidebarPanel.add(labeliconHome); // Add to sidebarPanel
 
         btnHome = new JButton("Home");
-        btnHome.setBounds(70, 170, 120, 40);
+        btnHome.setBounds(70, 170, 120, 40); // Adjust x if needed to align with icon
         btnHome.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
         btnHome.setForeground(UIvariables.WHITE_COLOR);
-
-        btnHome.setBorderPainted(false); // Remove a borda
-        btnHome.setContentAreaFilled(false); // Remove o preenchimento
-        btnHome.setFocusPainted(false); // Remove o destaque ao focar
+        btnHome.setBorderPainted(false);
+        btnHome.setContentAreaFilled(false);
+        btnHome.setFocusPainted(false);
         btnHome.setOpaque(false);
+        sidebarPanel.add(btnHome); // Add to sidebarPanel
 
         btnHome.addMouseListener(new MouseAdapter() {
             @Override
@@ -121,16 +106,18 @@ public class CrudFrame extends JFrame {
             }
         });
 
+        // --- Pacientes Button and Icon ---
         iconPacientes = new ImageIcon(getClass().getResource("../img/assets/icon-pacientes.png"));
-        JLabel labeliconPacientes = new JLabel(iconPacientes);
+        labeliconPacientes = new JLabel(iconPacientes);
         labeliconPacientes.setBounds(58, 250, 32, 32);
+        sidebarPanel.add(labeliconPacientes); // Add to sidebarPanel
 
-        //adicionados ao construtor
-        add(contentPanel);
-        contentPanel.add(sidebarPanel);
-        sidebarPanel.add(labeliconLogo);
+        // You'll likely need a btnPacientes too, similar to btnHome, and add it to sidebarPanel
 
-
+        // Remove these lines as they were causing issues
+        // add(contentPanel); // Already added above
+        // contentPanel.add(sidebarPanel); // sidebarPanel should be a direct child of JFrame, not contentPanel
+        // sidebarPanel.add(labeliconLogo); // This is good, just make sure it's done once and correctly positioned
     }
 
     public static void main(String[] args) {
@@ -139,5 +126,4 @@ public class CrudFrame extends JFrame {
             frame.setVisible(true);
         });
     }
-
 }
