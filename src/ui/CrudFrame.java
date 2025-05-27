@@ -2,6 +2,7 @@ package ui;
 
 import constants.UIvariables;
 
+import java.sql.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -51,31 +52,31 @@ public class CrudFrame extends JFrame {
         // Initialize contentPanel ONCE
 
         contentPanel = new JPanel();
-        contentPanel.setBounds(380, 42, 1100, 670); // Adjusted x-coordinate to be next to sidebar
+        contentPanel.setBounds(380, 42, 1000, 670); // Adjusted x-coordinate to be next to sidebar
         contentPanel.setBackground(UIvariables.WHITE_COLOR); // Or BACKGROUND_PANEL_BLUE as per your last setup
         contentPanel.setLayout(null);
         add(contentPanel); // Add contentPanel to the JFrame
 
         labelTitle = new JLabel("Nome");
-        labelTitle.setBounds(125, 30, 400, 60);
+        labelTitle.setBounds(70, 30, 400, 60);
         labelTitle.setForeground(UIvariables.BLACK_COLOR);
         labelTitle.setFont(UIvariables.FONT_TEXT);
         contentPanel.add(labelTitle);
 
         labelTitle = new JLabel("Numero de telefone");
-        labelTitle.setBounds(350, 30, 400, 60);
+        labelTitle.setBounds(250, 30, 400, 60);
         labelTitle.setForeground(UIvariables.BLACK_COLOR);
         labelTitle.setFont(UIvariables.FONT_TEXT);
         contentPanel.add(labelTitle);
 
         labelTitle = new JLabel("Data Nascimento");
-        labelTitle.setBounds(670, 30, 400, 60);
+        labelTitle.setBounds(570, 30, 400, 60);
         labelTitle.setForeground(UIvariables.BLACK_COLOR);
         labelTitle.setFont(UIvariables.FONT_TEXT);
         contentPanel.add(labelTitle);
 
         labelTitle = new JLabel("Ações");
-        labelTitle.setBounds(970, 30, 400, 60);
+        labelTitle.setBounds(870, 30, 400, 60);
         labelTitle.setForeground(UIvariables.BLACK_COLOR);
         labelTitle.setFont(UIvariables.FONT_TEXT);
         contentPanel.add(labelTitle);
@@ -93,7 +94,46 @@ public class CrudFrame extends JFrame {
         contentPanel.add(labelIconLine);
 
         //-------------------------------------------------------------------------------
+        //Conexão com o banco de dados começa agora
 
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/dbmeditrack", "root", "admin");
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT Nome, numero_telefone, data_nascimento FROM paciente_");
+
+            int y = 140;
+            while (rs.next()) {
+                String nome = rs.getString("Nome");
+                String telefone = rs.getString("numero_telefone");
+                String dataNascimento = rs.getString("data_nascimento");
+
+                JLabel lblNome = new JLabel(nome);
+                lblNome.setBounds(125, y, 200, 40);
+                lblNome.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
+                contentPanel.add(lblNome);
+
+                JLabel lblTelefone = new JLabel(telefone);
+                lblTelefone.setBounds(350, y, 200, 40);
+                lblTelefone.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
+                contentPanel.add(lblTelefone);
+
+                JLabel lblData = new JLabel(dataNascimento);
+                lblData.setBounds(670, y, 200, 40);
+                lblData.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
+                contentPanel.add(lblData);
+
+                JButton btnEditar = new JButton("Editar");
+                btnEditar.setBounds(970, y, 100, 30);
+                contentPanel.add(btnEditar);
+
+                y += 50;
+            }
+
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erro ao carregar dados do banco.");
+        }
 
 
         //-------------------------------------------------------------------------------
