@@ -121,6 +121,7 @@ public class Crud extends JFrame {
                 RecepcionistaFrame RecepcionistaFrame = new RecepcionistaFrame();
                 RecepcionistaFrame.setVisible(true);
 
+                SwingUtilities.getWindowAncestor(btnPacientes).dispose();
             }
         });
 
