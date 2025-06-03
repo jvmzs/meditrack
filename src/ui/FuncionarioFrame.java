@@ -4,22 +4,29 @@ import constants.UIvariables;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
-import java.awt.Color;
-import javax.swing.JPanel;
 import java.awt.event.MouseEvent;
 import java.net.URL;
-import javax.swing.text.MaskFormatter; // Importação necessária
+import javax.swing.Timer;
+import javax.swing.text.MaskFormatter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 
 public class FuncionarioFrame extends JFrame {
     //declarando as variaveis
-    JPanel  painelMaior, sidebarPanel, rightPainel ;
-    JLabel textoTitulo, labelNome, labelSobrenome, labelCPF,  labelNuTelefone, labelDataNasc, labeliconLogo, labeliconHome, labeliconPacientes, labeliconLogOut;;
-    JButton botaoCadastrar, btnSeta, btnHome, btnPacientes, btnLogOut;;
-    JTextField campoTNome, campoTSobrenome, campoCPF, campoNuTelefone; // campoDataNasc removido daqui
-    JFormattedTextField campoDataNasc; // Agora é um JFormattedTextField
+    JPanel painelMaior, sidebarPanel, rightPainel;
+    JLabel textoTitulo, labelNome, labelSobrenome, labelCPF, labelNuTelefone, labelDataNasc, labeliconLogo, labeliconHome, labeliconPacientes, labeliconLogOut;
+    ;
+    JButton botaoCadastrar, btnSeta, btnHome, btnPacientes, btnLogOut;
+    ;
+    JTextField campoTNome, campoTSobrenome, campoCPF, campoNuTelefone, campoDataNasc;
     ImageIcon iconLogo, iconHome, iconPacientes, iconLogOut, iconSeta, iconLine;
 
 
@@ -41,13 +48,13 @@ public class FuncionarioFrame extends JFrame {
         setLayout(null);
         getContentPane().setBackground(UIvariables.BACKGROUND_RECEPCIONISTA_FRAME);
 
-        URL iconUrl = getClass().getResource("../img/img-logo.png");
+        // Ícone da aplicação
+        URL iconUrl = getClass().getResource("/img/img-logo.png");
         if (iconUrl != null) {
             iconLogo = new ImageIcon(iconUrl);
             setIconImage(iconLogo.getImage());
-        } else {
-            System.err.println("Icone do logo não encontrado!");
         }
+
 
         //criação do painel maior que vai conter os outros dois paineis e labels
         painelMaior = new JPanel();
@@ -97,12 +104,17 @@ public class FuncionarioFrame extends JFrame {
             }
         });
 
+        btnHome.addActionListener(e -> {
+            dispose();
+            new FuncionarioFrame().setVisible(true);
+        });
+
         iconPacientes = new ImageIcon(getClass().getResource("../img/assets/icon-pacientes.png"));
         labeliconPacientes = new JLabel(iconPacientes);
         labeliconPacientes.setBounds(58, 250, 32, 32);
 
-        btnPacientes = new JButton("Funcionarios");
-        btnPacientes.setBounds(65, 250, 200, 40);
+        btnPacientes = new JButton("Funcionários");
+        btnPacientes.setBounds(65, 248, 200, 40);
         btnPacientes.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
         btnPacientes.setForeground(UIvariables.WHITE_COLOR);
 
@@ -123,6 +135,11 @@ public class FuncionarioFrame extends JFrame {
             public void mouseExited(MouseEvent e) {
                 btnPacientes.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
             }
+        });
+
+        btnPacientes.addActionListener(e -> {
+            dispose();
+            new CrudFuncionario().setVisible(true);
         });
 
         iconLogOut = new ImageIcon(getClass().getResource("../img/assets/icon-logOut.png"));
@@ -153,6 +170,11 @@ public class FuncionarioFrame extends JFrame {
             }
         });
 
+        btnLogOut.addActionListener(e -> {
+            dispose();
+            new LoginFrame().setVisible(true);
+        });
+
         iconSeta = new ImageIcon(getClass().getResource("../img/assets/icon-sideBar.png"));
         btnSeta = new JButton(iconSeta);
         btnSeta.setBounds(240, 16, 32, 32);
@@ -181,7 +203,6 @@ public class FuncionarioFrame extends JFrame {
         rightPainel.setLayout(null);
 
 
-
         //criação texto superior no caso o label superior com "cadastrar paciente"
         textoTitulo = new JLabel("Cadastrar funcionário");
         textoTitulo.setBounds(0, 40, 400, 60);
@@ -195,7 +216,7 @@ public class FuncionarioFrame extends JFrame {
         labelNome.setFont(UIvariables.FONT_INPUT);
 
         //campo de texto do nome
-        campoTNome= new JTextField();
+        campoTNome = new JTextField();
         campoTNome.setBounds(0, 194, 330, 40);
         campoTNome.setFont(UIvariables.FONT_INPUT);
         campoTNome.setForeground(UIvariables.BLACK_COLOR);
@@ -207,7 +228,7 @@ public class FuncionarioFrame extends JFrame {
         labelSobrenome.setFont(UIvariables.FONT_INPUT);
 
         //campo de texto do sobrenome
-        campoTSobrenome= new JTextField();
+        campoTSobrenome = new JTextField();
         campoTSobrenome.setBounds(500, 194, 330, 40);
         campoTSobrenome.setFont(UIvariables.FONT_INPUT);
         campoTSobrenome.setForeground(UIvariables.BLACK_COLOR);
@@ -226,9 +247,9 @@ public class FuncionarioFrame extends JFrame {
 
         //criação label numero de telefone
         labelNuTelefone = new JLabel("Número de telefone");
-        labelNuTelefone .setBounds(500, 300, 330, 40);
-        labelNuTelefone .setForeground(UIvariables.BLACK_COLOR);
-        labelNuTelefone .setFont(UIvariables.FONT_INPUT);
+        labelNuTelefone.setBounds(500, 300, 330, 40);
+        labelNuTelefone.setForeground(UIvariables.BLACK_COLOR);
+        labelNuTelefone.setFont(UIvariables.FONT_INPUT);
 
         //campo texto número de telefone
         campoNuTelefone = new JTextField();
@@ -236,23 +257,38 @@ public class FuncionarioFrame extends JFrame {
         campoNuTelefone.setForeground(UIvariables.BLACK_COLOR);
         campoNuTelefone.setFont(UIvariables.FONT_INPUT);
 
+        //criar o campo de email
+        JLabel labelEmail = new JLabel("Email");
+        labelEmail.setBounds(0, 434, 80, 40);
+        labelEmail.setForeground(UIvariables.BLACK_COLOR);
+        labelEmail.setFont(UIvariables.FONT_INPUT);
+        rightPainel.add(labelEmail);
+
+        JTextField campoEmail = new JTextField();
+        campoEmail.setBounds(0, 468, 330, 40);
+        campoEmail.setForeground(UIvariables.BLACK_COLOR);
+        campoEmail.setFont(UIvariables.FONT_INPUT);
+        rightPainel.add(campoEmail);
+
         //criação label data nascimento
         labelDataNasc = new JLabel("Data de nascimento");
-        labelDataNasc.setBounds(0, 444, 250, 40);
+        labelDataNasc.setBounds(0, 566, 250, 40);
         labelDataNasc.setForeground(UIvariables.BLACK_COLOR);
         labelDataNasc.setFont(UIvariables.FONT_INPUT);
 
-
         //campo texto data de nascimento
+
+
         try {
-            MaskFormatter dateMask = new MaskFormatter("##/##/####"); // DD/MM/YYYY
+            MaskFormatter dateMask = new MaskFormatter("   ##/##/####"); // DD/MM/YYYY
             dateMask.setPlaceholderCharacter('_');
             campoDataNasc = new JFormattedTextField(dateMask);
-            campoDataNasc.setBounds(0, 478, 330, 40);
-            campoDataNasc.setForeground(UIvariables.BLACK_COLOR);
+            campoDataNasc.setColumns(10);
+
+            campoDataNasc.setBounds(0, 600, 330, 40);
             campoDataNasc.setFont(UIvariables.FONT_INPUT);
-            campoDataNasc.setFocusLostBehavior(JFormattedTextField.PERSIST); // Mantém o formato ao perder o foco
-        } catch (java.text.ParseException e) {
+            painelMaior.add(campoDataNasc);
+        } catch (ParseException e) {
             e.printStackTrace();
         }
 
@@ -263,11 +299,34 @@ public class FuncionarioFrame extends JFrame {
         radioMedico.setForeground(UIvariables.BLACK_COLOR);
         radioMedico.setBackground(UIvariables.WHITE_COLOR);
 
+        final boolean[] medico = {false};
+        radioMedico.addActionListener(e -> {
+            if (radioMedico.isSelected()) {
+                medico[0] = true;
+                System.out.println("Eu sou medico");
+
+            } else {
+                medico[0] = false;
+            }
+
+        });
+
+
         JRadioButton radioEnfermeiro = new JRadioButton("Enfermeiro");
         radioEnfermeiro.setBounds(500, 460, 200, 40);
         radioEnfermeiro.setFont(UIvariables.FONT_INPUT);
         radioEnfermeiro.setForeground(UIvariables.BLACK_COLOR);
         radioEnfermeiro.setBackground(UIvariables.WHITE_COLOR);
+
+        final boolean[] enfermeiro = {false};
+        radioEnfermeiro.addActionListener(e -> {
+            if (radioEnfermeiro.isSelected()) {
+                enfermeiro[0] = true;
+                System.out.println("Eu sou enfermeiro");
+            } else {
+                enfermeiro[0] = false;
+            }
+        });
 
         JRadioButton radioEnfermeiroTriagem = new JRadioButton("Enf. Triagem");
         radioEnfermeiroTriagem.setBounds(500, 500, 250, 40);
@@ -275,12 +334,31 @@ public class FuncionarioFrame extends JFrame {
         radioEnfermeiroTriagem.setForeground(UIvariables.BLACK_COLOR);
         radioEnfermeiroTriagem.setBackground(UIvariables.WHITE_COLOR);
 
+        final boolean[] enfermeiroTriagem = {false};
+        radioEnfermeiroTriagem.addActionListener(e -> {
+            if (radioEnfermeiroTriagem.isSelected()) {
+                enfermeiroTriagem[0] = true;
+                System.out.println("Eu sou enfermeiro triagem");
+            } else {
+                enfermeiroTriagem[0] = false;
+            }
+        });
+
         JRadioButton radioRecepcionista = new JRadioButton("Recepcionista");
         radioRecepcionista.setBounds(500, 540, 200, 40);
         radioRecepcionista.setFont(UIvariables.FONT_INPUT);
         radioRecepcionista.setForeground(UIvariables.BLACK_COLOR);
         radioRecepcionista.setBackground(UIvariables.WHITE_COLOR);
 
+        final boolean[] recepcionista = {false};
+        radioRecepcionista.addActionListener(e -> {
+            if (radioRecepcionista.isSelected()) {
+                recepcionista[0] = true;
+                System.out.println("Eu sou recepcionista");
+            } else {
+                recepcionista[0] = false;
+            }
+        });
 
 
         // criando o ButtonGroup para permitir apenas um checkbox selecionado por vez
@@ -291,14 +369,9 @@ public class FuncionarioFrame extends JFrame {
         grupoCheckBoxes.add(radioRecepcionista);
 
 
-
-
-
-
-
         //criando botão cadastrar
         botaoCadastrar = new JButton("Cadastrar");
-        botaoCadastrar.setBounds(760, 40, 150, 60);
+        botaoCadastrar.setBounds(720, 40, 150, 60);
         botaoCadastrar.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
         botaoCadastrar.setForeground(UIvariables.WHITE_COLOR);
         botaoCadastrar.setBackground(UIvariables.COLOR_SIDEBAR);
@@ -315,6 +388,108 @@ public class FuncionarioFrame extends JFrame {
             }
         });
 
+        botaoCadastrar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+
+                String query;
+                String SUrl, SUser, Spass;
+                String cpf, nomeCompleto, nome, sobrenome, numeroTelefone, email , checkboxMedico, checkboxEnfermeiro, checkboxEnfermeiroTriagem, checkboxRecepcionista;
+                java.sql.Date dataNacimento = null;
+
+                SUrl = "jdbc:mysql://localhost:3306/dbmeditrack";
+                SUser = "root";
+                Spass = "admin";
+
+                if ("".equals(campoCPF.getText()) || "".equals(campoTNome.getText()) || "".equals(campoEmail.getText()) || "".equals(campoTSobrenome.getText()) || "".equals(campoNuTelefone.getText()) || campoDataNasc.getText().contains("_")) {
+                    System.out.println("Erro: campos vazios ou data incompleta");
+                    return;
+                } else if (!(radioMedico.isSelected() ||
+                        radioEnfermeiro.isSelected() ||
+                        radioEnfermeiroTriagem.isSelected() ||
+                        radioRecepcionista.isSelected())) {
+
+                    JOptionPane.showMessageDialog(null, "Você precisa ao menos selecionar um funcionário");
+
+
+                } else {
+                    nome = campoTNome.getText();
+                    sobrenome = campoTSobrenome.getText();
+                    cpf = campoCPF.getText();
+                    numeroTelefone = campoNuTelefone.getText();
+                    nomeCompleto = nome + " " + sobrenome;
+                    checkboxMedico = radioMedico.isSelected() ? "1" : "0";
+                    checkboxEnfermeiro = radioEnfermeiro.isSelected() ? "1" : "0";
+                    checkboxEnfermeiroTriagem = radioEnfermeiroTriagem.isSelected() ? "1" : "0";
+                    checkboxRecepcionista = radioRecepcionista.isSelected() ? "1" : "0";
+                    email = campoEmail.getText();
+
+
+                    String dataDigitada = campoDataNasc.getText().replaceAll("[\\s_]", "");
+                    SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+                    try {
+                        java.util.Date dataUtil = formato.parse(dataDigitada);
+                        dataNacimento = new java.sql.Date(dataUtil.getTime());
+                    } catch (ParseException ex) {
+                        System.err.println("Erro ao formatar a data: " + ex.getMessage());
+                        ex.printStackTrace();
+                        return; // Interrompe a ação se a data for inválida
+                    }
+
+                    query = "INSERT INTO funcionario_ (Nome, cpf, Medico, Enfermeiro, Enfermeiro_triagem, recepcionista, numero_telefone, data_nacimento, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+                    try (Connection con = DriverManager.getConnection(SUrl, SUser, Spass); PreparedStatement pstmt = con.prepareStatement(query)) {
+
+                        pstmt.setString(1, nomeCompleto);
+                        pstmt.setString(2, cpf);
+                        pstmt.setString(3, checkboxMedico);
+                        pstmt.setString(4, checkboxEnfermeiro);
+                        pstmt.setString(5, checkboxEnfermeiroTriagem);
+                        pstmt.setString(6, checkboxRecepcionista);
+                        pstmt.setString(7, numeroTelefone);
+                        pstmt.setDate(8, dataNacimento);
+                        pstmt.setString(9, email);
+
+
+                        int linhasAfetadas = pstmt.executeUpdate();
+
+                        if (linhasAfetadas > 0) {
+                            System.out.println("Funcionário cadastrado com sucesso!");
+                            JOptionPane.showMessageDialog(FuncionarioFrame.this,
+                                    "Funcionário cadastrado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+
+                            // ✅ Enviar o e-mail com o CPF
+                            try {
+                                ConviteService.enviarConvite(email, cpf);
+                                System.out.println("E-mail enviado com sucesso para: " + email);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                JOptionPane.showMessageDialog(FuncionarioFrame.this,
+                                        "Funcionário foi cadastrado, mas houve erro ao enviar o e-mail.",
+                                        "Erro de envio", JOptionPane.ERROR_MESSAGE);
+                            }
+
+                            // Limpa os campos
+                            campoCPF.setText("");
+                            campoTNome.setText("");
+                            campoTSobrenome.setText("");
+                            campoNuTelefone.setText("");
+                            campoDataNasc.setText("");
+                            campoEmail.setText("");
+                        } else {
+                            System.out.println("Erro ao cadastrar o paciente.");
+                        }
+
+                    } catch (SQLException ex) {
+                        System.err.println("Erro de SQL: " + ex.getMessage());
+                        ex.printStackTrace();
+                    }
+
+                }
+            }
+        });
+
 
         add(painelMaior);
         painelMaior.add(sidebarPanel);
@@ -327,7 +502,7 @@ public class FuncionarioFrame extends JFrame {
         rightPainel.add(labelCPF);
         rightPainel.add(campoCPF);
         rightPainel.add(labelNuTelefone);
-        rightPainel.add( campoNuTelefone);
+        rightPainel.add(campoNuTelefone);
         rightPainel.add(labelDataNasc);
         rightPainel.add(campoDataNasc);
         rightPainel.add(botaoCadastrar);
@@ -432,7 +607,7 @@ public class FuncionarioFrame extends JFrame {
     private void toggleSidebarElements(boolean visible) {
         // Ajusta a visibilidade dos textos dos botões, mas mantém os ícones visíveis
         btnHome.setText(visible ? "Home" : "");
-        btnPacientes.setText(visible ? "Funcionarios" : "");
+        btnPacientes.setText(visible ? "Pacientes" : "");
         btnLogOut.setText(visible ? "Sair" : "");
 
         // Os ícones permanecem visíveis
@@ -441,7 +616,9 @@ public class FuncionarioFrame extends JFrame {
         labeliconLogOut.setVisible(true);
     }
 
-    public static void main(String[]args){
-        new FuncionarioFrame();
+    public static void main(String[] args) {
+        new FuncionarioFrame().setVisible(true);
     }
+
+
 }

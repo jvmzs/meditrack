@@ -117,7 +117,7 @@ public class RecepcionistaFrame extends JFrame {
         labeliconPacientes.setBounds(58, 250, 32, 32);
 
         btnPacientes = new JButton("Pacientes");
-        btnPacientes.setBounds(50, 250, 200, 40);
+        btnPacientes.setBounds(50, 248, 200, 40);
         btnPacientes.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
         btnPacientes.setForeground(UIvariables.WHITE_COLOR);
 
