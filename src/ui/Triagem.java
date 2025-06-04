@@ -10,11 +10,15 @@ import java.net.URL;
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.ResultSet;
 
 
 public class Triagem extends JFrame {
 
-    // criação das variaveis de componentes
     JPanel sidebarPanel, contentPanel, formsPanel;
     ImageIcon iconLogo, iconHome, iconPacientes, iconLogOut, iconSeta, iconLine;
     JLabel labelTitle;
@@ -27,13 +31,14 @@ public class Triagem extends JFrame {
     JLabel labeliconLogOut;
     JLabel labelInputTemperatura, labelInputAltura, labelInputAlergias, labelInputSintomas, labelInputObs;
     JLabel labelInputAge;
-    JTextField inputAge, inputAltura, inputAlergias; // inputAlergias é um JTextField aqui, mas depois vira JTextArea
+    JTextField inputAge, inputAltura;
+    JTextArea inputAlergias;
+    JTextArea inputSintomas, inputObs;
     JLabel labelInputPeso, labelInputTitulo;
-    JTextField inputPeso, inputSintomas, inputObs; // inputSintomas e inputObs são JTextFields aqui, mas depois viram JTextAreas
+    JTextField inputPeso;
     JTextField inputNome;
     JButton btnCadastrar, btnSeta, btnHome, btnPacientes, btnLogOut;
 
-    // variaveis para a animação
     private boolean sidebarExpanded = true;
     private final int SIDEBAR_WIDTH_EXPANDED = 280;
     private final int SIDEBAR_WIDTH_MINIMIZED = 80;
@@ -51,12 +56,11 @@ public class Triagem extends JFrame {
         UIManager.put("OptionPane.messageFont", new Font("Poppins", Font.BOLD, 15));
         UIManager.put("OptionPane.messageForeground", UIvariables.BLACK_COLOR);
         UIManager.put("OptionPane.background", Color.WHITE);
-        UIManager.put("Panel.background", Color.WHITE); // necessário para o fundo
+        UIManager.put("Panel.background", Color.WHITE);
         UIManager.put("Button.background", UIvariables.BACKGROUND_PANEL_BLUE);
         UIManager.put("Button.foreground", UIvariables.WHITE_COLOR);
 
 
-        // definir o icon do logo
         URL iconUrl = getClass().getResource("../img/img-logo.png");
         if (iconUrl != null) {
             iconLogo = new ImageIcon(iconUrl);
@@ -65,15 +69,12 @@ public class Triagem extends JFrame {
             System.err.println("Icone do logo não encontrado!");
         }
 
-// criação do painel e conteúdo
-
 
         contentPanel = new JPanel();
         contentPanel.setBounds(100, 42, 1300, 670);
         contentPanel.setBackground(UIvariables.WHITE_COLOR);
         contentPanel.setLayout(null);
         add(contentPanel);
-//titulo
 
         labelInputTitulo = new JLabel("Cadastrar Triagem");
         labelInputTitulo.setBounds(350, 40, 350, 40);
@@ -81,7 +82,6 @@ public class Triagem extends JFrame {
         labelInputTitulo.setFont(UIvariables.FONT_TITLE);
         contentPanel.add(labelInputTitulo);
 
-// campo de nome
         labelInputNome = new JLabel("Nome:");
         labelInputNome.setBounds(350, 135, 200, 40);
         labelInputNome.setForeground(UIvariables.BLACK_COLOR);
@@ -89,124 +89,112 @@ public class Triagem extends JFrame {
         contentPanel.add(labelInputNome);
 
         inputNome = new JTextField();
-        inputNome.setBounds(350, 170, 350, 40); // +50px
+        inputNome.setBounds(350, 170, 350, 40);
         inputNome.setFont(UIvariables.FONT_INPUT);
         inputNome.setForeground(UIvariables.BLACK_COLOR);
         contentPanel.add(inputNome);
 
-//campo de peso
+
         labelInputPeso = new JLabel("Peso (kg)");
-        labelInputPeso.setBounds(350, 340, 250, 40); // +50px
+        labelInputPeso.setBounds(350, 340, 250, 40);
         labelInputPeso.setForeground(UIvariables.BLACK_COLOR);
         labelInputPeso.setFont(UIvariables.FONT_TITLE2);
         contentPanel.add(labelInputPeso);
 
-        inputPeso = new JTextField();
-        inputPeso.setBounds(350, 300, 120, 40); // +50px
-        inputPeso.setFont(UIvariables.FONT_INPUT);
-        inputPeso.setForeground(UIvariables.BLACK_COLOR);
-        ((AbstractDocument) inputPeso.getDocument()).setDocumentFilter(new NumericFilter()); // APLICANDO O FILTRO
-        contentPanel.add(inputPeso);
+        inputTEMP = new JTextField();
+        inputTEMP.setBounds(350, 300, 120, 40);
+        inputTEMP.setFont(UIvariables.FONT_INPUT);
+        inputTEMP.setForeground(UIvariables.BLACK_COLOR);
+        // APLICANDO O DoubleFilter para peso
+        ((AbstractDocument) inputTEMP.getDocument()).setDocumentFilter(new DoubleFilter());
+        contentPanel.add(inputTEMP);
 
 
-//campo de temperatura
         labelInputTemperatura = new JLabel("Temperatura (°C)");
-        labelInputTemperatura.setBounds(350, 260, 200, 40); // +50px
+        labelInputTemperatura.setBounds(350, 260, 200, 40);
         labelInputTemperatura.setForeground(UIvariables.BLACK_COLOR);
         labelInputTemperatura.setFont(UIvariables.FONT_TITLE2);
         contentPanel.add(labelInputTemperatura);
 
-        inputTEMP = new JTextField();
-        inputTEMP.setBounds(350, 380, 120, 40); // +50px
-        inputTEMP.setFont(UIvariables.FONT_INPUT);
-        inputTEMP.setForeground(UIvariables.BLACK_COLOR);
-        ((AbstractDocument) inputTEMP.getDocument()).setDocumentFilter(new NumericFilter()); // APLICANDO O FILTRO
-        contentPanel.add(inputTEMP);
-
-        //campo de idade
+        inputPeso = new JTextField();
+        inputPeso.setBounds(350, 380, 120, 40);
+        inputPeso.setFont(UIvariables.FONT_INPUT);
+        inputPeso.setForeground(UIvariables.BLACK_COLOR);
+        // APLICANDO O DoubleFilter para temperatura
+        ((AbstractDocument) inputPeso.getDocument()).setDocumentFilter(new DoubleFilter());
+        contentPanel.add(inputPeso);
 
         labelInputAge = new JLabel("Idade:");
-        labelInputAge.setBounds(550, 260, 200, 40); // +50px
+        labelInputAge.setBounds(550, 260, 200, 40);
         labelInputAge.setForeground(UIvariables.BLACK_COLOR);
         labelInputAge.setFont(UIvariables.FONT_TITLE2);
         contentPanel.add(labelInputAge);
 
         inputAge = new JTextField();
-        inputAge.setBounds(550, 300, 120, 41); // +50px
+        inputAge.setBounds(550, 300, 120, 41);
         inputAge.setFont(UIvariables.FONT_INPUT);
         inputAge.setForeground(UIvariables.BLACK_COLOR);
-        ((AbstractDocument) inputAge.getDocument()).setDocumentFilter(new NumericFilter()); // APLICANDO O FILTRO
+        ((AbstractDocument) inputAge.getDocument()).setDocumentFilter(new NumericFilter());
         contentPanel.add(inputAge);
 
-        //campo de altura
-
-        labelInputAltura = new JLabel("Altura:");
+        labelInputAltura = new JLabel("Altura (m):");
         labelInputAltura.setBounds(550, 340, 200, 40);
         labelInputAltura.setForeground(UIvariables.BLACK_COLOR);
-        labelInputAltura.setFont(UIvariables.FONT_INPUT);
+        labelInputAltura.setFont(UIvariables.FONT_TITLE2);
         contentPanel.add(labelInputAltura);
 
         inputAltura = new JTextField();
         inputAltura.setBounds(550, 380, 120, 40);
         inputAltura.setFont(UIvariables.FONT_INPUT);
         inputAltura.setForeground(UIvariables.BLACK_COLOR);
-        ((AbstractDocument) inputAltura.getDocument()).setDocumentFilter(new NumericFilter()); // APLICANDO O FILTRO
+        ((AbstractDocument) inputAltura.getDocument()).setDocumentFilter(new DoubleFilter());
         contentPanel.add(inputAltura);
 
-        //campo de alergias
-
         labelInputAlergias = new JLabel("Alergias");
-        labelInputAlergias.setBounds(750, 135, 250, 40); // +50px
+        labelInputAlergias.setBounds(750, 135, 250, 40);
         labelInputAlergias.setForeground(UIvariables.BLACK_COLOR);
         labelInputAlergias.setFont(UIvariables.FONT_TITLE2);
         contentPanel.add(labelInputAlergias);
 
-        // Observação: 'inputAlergias' foi declarado como JTextField no início, mas é usado como JTextArea aqui.
-        // O DocumentFilter é aplicado apenas em JTextFields para números.
-        JTextArea inputAlergiasTextArea = new JTextArea(); // Renomeado para evitar conflito
-        inputAlergiasTextArea.setLineWrap(true);
-        inputAlergiasTextArea.setWrapStyleWord(true);
-        inputAlergiasTextArea.setFont(UIvariables.FONT_INPUT);
-        inputAlergiasTextArea.setForeground(UIvariables.BLACK_COLOR);
-        JScrollPane scrollAlergias = new JScrollPane(inputAlergiasTextArea);
+        inputAlergias = new JTextArea();
+        inputAlergias.setLineWrap(true);
+        inputAlergias.setWrapStyleWord(true);
+        inputAlergias.setFont(UIvariables.FONT_INPUT);
+        inputAlergias.setForeground(UIvariables.BLACK_COLOR);
+        JScrollPane scrollAlergias = new JScrollPane(inputAlergias);
         scrollAlergias.setBounds(750, 170, 470, 100);
         contentPanel.add(scrollAlergias);
-        //campo de sintomas
 
         labelInputSintomas = new JLabel("Sintomas");
-        labelInputSintomas.setBounds(750, 285, 250, 40); // +50px
+        labelInputSintomas.setBounds(750, 285, 250, 40);
         labelInputSintomas.setForeground(UIvariables.BLACK_COLOR);
         labelInputSintomas.setFont(UIvariables.FONT_TITLE2);
         contentPanel.add(labelInputSintomas);
 
-        // Observação: 'inputSintomas' foi declarado como JTextField no início, mas é usado como JTextArea aqui.
-        JTextArea inputSintomasTextArea = new JTextArea(); // Renomeado para evitar conflito
-        inputSintomasTextArea.setLineWrap(true);
-        inputSintomasTextArea.setWrapStyleWord(true);
-        inputSintomasTextArea.setFont(UIvariables.FONT_INPUT);
-        inputSintomasTextArea.setForeground(UIvariables.BLACK_COLOR);
-        JScrollPane scrollSintomas = new JScrollPane(inputSintomasTextArea);
+        inputSintomas = new JTextArea();
+        inputSintomas.setLineWrap(true);
+        inputSintomas.setWrapStyleWord(true);
+        inputSintomas.setFont(UIvariables.FONT_INPUT);
+        inputSintomas.setForeground(UIvariables.BLACK_COLOR);
+        JScrollPane scrollSintomas = new JScrollPane(inputSintomas);
         scrollSintomas.setBounds(750, 320, 470, 100);
         contentPanel.add(scrollSintomas);
-        //campo de obs
 
         labelInputObs = new JLabel("Obs:");
-        labelInputObs.setBounds(350, 460, 250, 40); // +50px
+        labelInputObs.setBounds(350, 460, 250, 40);
         labelInputObs.setForeground(UIvariables.BLACK_COLOR);
         labelInputObs.setFont(UIvariables.FONT_TITLE2);
         contentPanel.add(labelInputObs);
 
-        // Observação: 'inputObs' foi declarado como JTextField no início, mas é usado como JTextArea aqui.
-        JTextArea inputObsTextArea = new JTextArea(); // Renomeado para evitar conflito
-        inputObsTextArea.setLineWrap(true);
-        inputObsTextArea.setWrapStyleWord(true);
-        inputObsTextArea.setFont(UIvariables.FONT_INPUT);
-        inputObsTextArea.setForeground(UIvariables.BLACK_COLOR);
-        JScrollPane scrollObs = new JScrollPane(inputObsTextArea);
+        inputObs = new JTextArea();
+        inputObs.setLineWrap(true);
+        inputObs.setWrapStyleWord(true);
+        inputObs.setFont(UIvariables.FONT_INPUT);
+        inputObs.setForeground(UIvariables.BLACK_COLOR);
+        JScrollPane scrollObs = new JScrollPane(inputObs);
         scrollObs.setBounds(350, 500, 700, 150);
         contentPanel.add(scrollObs);
 
-        // criação do sidebar
         sidebarPanel = new JPanel();
         sidebarPanel.setBounds(0, 0, 280, 670);
         sidebarPanel.setBackground(UIvariables.COLOR_SIDEBAR);
@@ -226,14 +214,64 @@ public class Triagem extends JFrame {
         btnCadastrar.setBackground(UIvariables.COLOR_SIDEBAR);
         contentPanel.add(btnCadastrar);
 
-        // logo
+        btnCadastrar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String Nome = inputNome.getText();
+                String peso = inputPeso.getText();
+                String Temperatura_corpo = inputTEMP.getText();
+                String idade = inputAge.getText();
+                String altura = inputAltura.getText();
+                String Alergia = inputAlergias.getText();
+                String obs = inputObs.getText();
+                String sintomas = inputSintomas.getText();
+
+                try {
+                    Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/dbmeditrack", "root", "admin");
+
+                    // Verifica se o nome existe
+                    String sqlBusca = "SELECT * FROM paciente_ WHERE nome = ?";
+                    PreparedStatement stmtBusca = conn.prepareStatement(sqlBusca);
+                    stmtBusca.setString(1, Nome);
+                    ResultSet rs = stmtBusca.executeQuery();
+
+                    if (rs.next()) {
+                        // Nome existe, faz o UPDATE
+                        String sqlUpdate = "UPDATE paciente_ SET peso = ?, Temperatura_corpo = ?, idade = ?, altura = ?, Alergia = ?, obs = ?, sintomas = ? WHERE Nome = ?";
+                        PreparedStatement stmtUpdate = conn.prepareStatement(sqlUpdate);
+                        stmtUpdate.setString(1, peso);
+                        stmtUpdate.setString(2, Temperatura_corpo);
+                        stmtUpdate.setString(3, idade);
+                        stmtUpdate.setString(4, altura);
+                        stmtUpdate.setString(5, Alergia);
+                        stmtUpdate.setString(6, obs);
+                        stmtUpdate.setString(7, sintomas);
+                        stmtUpdate.setString(8, Nome);
+
+                        stmtUpdate.executeUpdate();
+                        stmtUpdate.close();
+JOptionPane.showMessageDialog(null, "Informações atualizadas com sucesso!");
+                    } else {
+                        System.out.println("Nome não encontrado.");
+                    }
+
+                    rs.close();
+                    stmtBusca.close();
+                    conn.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+
+
+
         iconLogo = new ImageIcon(getClass().getResource("/img/img-logo.png"));
         Image scalediconLogo = iconLogo.getImage().getScaledInstance(54, 54, Image.SCALE_SMOOTH);
         labeliconLogo = new JLabel(new ImageIcon(scalediconLogo));
         labeliconLogo.setBounds((SIDEBAR_WIDTH_EXPANDED - 54) / 2, 34, 54, 54);
         sidebarPanel.add(labeliconLogo);
 
-        // botões
         iconPacientes = new ImageIcon(getClass().getResource("/img/assets/icon-pacientes.png"));
         labeliconPacientes = new JLabel(iconPacientes);
         labeliconPacientes.setBounds(58, 250, 32, 32);
@@ -243,6 +281,11 @@ public class Triagem extends JFrame {
         btnPacientes.setBounds(23, 235, 246, 65);
         configurarBotaoSidebar(btnPacientes);
         sidebarPanel.add(btnPacientes);
+
+        btnPacientes.setBorderPainted(false); // Remove a borda
+        btnPacientes.setContentAreaFilled(false); // Remove o preenchimento
+        btnPacientes.setFocusPainted(false); // Remove o destaque ao focar
+        btnPacientes.setOpaque(false);
 
         iconLogOut = new ImageIcon(getClass().getResource("/img/assets/icon-logOut.png"));
         labeliconLogOut = new JLabel(iconLogOut);
@@ -262,7 +305,6 @@ public class Triagem extends JFrame {
             }
         });
 
-        //remover a estilização do botão
         iconHome = new ImageIcon(getClass().getResource("/img/assets/icon-home.png"));
         labeliconHome = new JLabel(iconHome);
         labeliconHome.setBounds(58, 170, 32, 32);
@@ -290,11 +332,9 @@ public class Triagem extends JFrame {
         });
         sidebarPanel.add(btnHome);
 
-        // Ícone de Pacientes e botão (re-declarado, atenção a isso)
         iconPacientes = new ImageIcon(getClass().getResource("../img/assets/icon-pacientes.png"));
         labeliconPacientes = new JLabel(iconPacientes);
         labeliconPacientes.setBounds(58, 250, 32, 32);
-        //sidebarPanel.add(labeliconPacientes); // Já adicionado acima
 
         btnPacientes = new JButton("Pacientes");
         btnPacientes.setBounds(50, 248, 200, 40);
@@ -311,10 +351,9 @@ public class Triagem extends JFrame {
             }
         });
 
-        //remover a estilização do botão
-        btnPacientes.setBorderPainted(false); // Remove a borda
-        btnPacientes.setContentAreaFilled(false); // Remove o preenchimento
-        btnPacientes.setFocusPainted(false); // Remove o destaque ao focar
+        btnPacientes.setBorderPainted(false);
+        btnPacientes.setContentAreaFilled(false);
+        btnPacientes.setFocusPainted(false);
         btnPacientes.setOpaque(false);
 
         btnPacientes.addMouseListener(new MouseAdapter() {
@@ -329,23 +368,19 @@ public class Triagem extends JFrame {
                 btnPacientes.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
             }
         });
-        //sidebarPanel.add(btnPacientes); // Já adicionado acima
 
-        // Ícone de LogOut e botão (re-declarado, atenção a isso)
         iconLogOut = new ImageIcon(getClass().getResource("../img/assets/icon-logOut.png"));
         labeliconLogOut = new JLabel(iconLogOut);
         labeliconLogOut.setBounds(58, 460, 32, 32);
-        //sidebarPanel.add(labeliconLogOut); // Já adicionado acima
 
         btnLogOut = new JButton("Sair");
         btnLogOut.setBounds(45, 455, 150, 40);
         btnLogOut.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
         btnLogOut.setForeground(UIvariables.WHITE_COLOR);
 
-        //remover a estilização do botão
-        btnLogOut.setBorderPainted(false); // Remove a borda
-        btnLogOut.setContentAreaFilled(false); // Remove o preenchimento
-        btnLogOut.setFocusPainted(false); // Remove o destaque ao focar
+        btnLogOut.setBorderPainted(false);
+        btnLogOut.setContentAreaFilled(false);
+        btnLogOut.setFocusPainted(false);
         btnLogOut.setOpaque(false);
 
         btnLogOut.addMouseListener(new MouseAdapter() {
@@ -373,10 +408,9 @@ public class Triagem extends JFrame {
         btnSeta = new JButton(iconSeta);
         btnSeta.setBounds(240, 16, 32, 32);
 
-        //remover a estilização do botão
-        btnSeta.setBorderPainted(false); // Remove a borda
-        btnSeta.setContentAreaFilled(false); // Remove o preenchimento
-        btnSeta.setFocusPainted(false); // Remove o destaque ao focar
+        btnSeta.setBorderPainted(false);
+        btnSeta.setContentAreaFilled(false);
+        btnSeta.setFocusPainted(false);
         btnSeta.setOpaque(false);
 
         btnSeta.addMouseListener(new MouseAdapter() {
@@ -387,8 +421,6 @@ public class Triagem extends JFrame {
         });
 
 
-        btnSeta.addActionListener(e -> toggleSidebar());
-
         formsPanel = new JPanel();
         formsPanel.setBounds(346, 0, 1154, 800);
         formsPanel.setBackground(UIvariables.WHITE_COLOR);
@@ -398,19 +430,13 @@ public class Triagem extends JFrame {
         labelTitle.setBounds(0, 40, 400, 60);
         labelTitle.setForeground(UIvariables.BLACK_COLOR);
         labelTitle.setFont(UIvariables.FONT_TITLE);
-
-
-
     }
-
-
 
     private void toggleSidebar() {
         int targetWidth = sidebarExpanded ? SIDEBAR_WIDTH_MINIMIZED : SIDEBAR_WIDTH_EXPANDED;
         final int[] startWidth = {sidebarPanel.getWidth()};
-        final int[] startX = {formsPanel.getX()}; // Posição inicial do formsPanel
+        final int[] startX = {formsPanel.getX()};
 
-        // Controlar visibilidade dos textos dos botões
         toggleSidebarElements(!sidebarExpanded);
 
         if (animationTimer != null && animationTimer.isRunning()) {
@@ -420,28 +446,22 @@ public class Triagem extends JFrame {
         animationTimer = new Timer(15, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Calcula o próximo passo dinamicamente
                 int currentWidth = sidebarPanel.getWidth();
-                int step = Math.min(30, Math.abs(currentWidth - targetWidth)); // Evita ultrapassar o targetWidth
+                int step = Math.min(30, Math.abs(currentWidth - targetWidth));
 
-                // Ajusta a largura com base no estado da sidebar
                 int newWidth = currentWidth + (sidebarExpanded ? -step : step);
-                int newX = startX[0] + (sidebarExpanded ? -96 : 96); // Move o formsPanel gradualmente
+                int newX = startX[0] + (sidebarExpanded ? -96 : 96);
 
                 if (newWidth == targetWidth) {
-                    // Finaliza a animação quando atingir o tamanho esperado
                     animationTimer.stop();
                     sidebarExpanded = !sidebarExpanded;
-                    newX = startX[0] + (sidebarExpanded ? +96 : -96); // Ajusta a posição final do formsPanel
+                    newX = startX[0] + (sidebarExpanded ? +96 : -96);
                 }
 
-                // Atualiza o tamanho da sidebar
                 sidebarPanel.setBounds(0, 0, newWidth, 670);
 
-                // Atualiza a posição do formsPanel
                 formsPanel.setBounds(newX, formsPanel.getY(), formsPanel.getWidth(), formsPanel.getHeight());
 
-                // Reposiciona os ícones e botões com base na nova largura
                 updateSidebarComponents(newWidth);
 
                 sidebarPanel.revalidate();
@@ -474,59 +494,46 @@ public class Triagem extends JFrame {
         });
     }
 
-
-
-
-    // SideBar
     private void updateSidebarComponents(int sidebarWidth) {
-        // Verifica se a sidebar está minimizada ou expandida
         boolean isMinimized = sidebarWidth == SIDEBAR_WIDTH_MINIMIZED;
         int logoWidth = 54;
 
-        // Centraliza os ícones horizontalmente na sidebar minimizada
-        int iconX = isMinimized ? sidebarWidth / 2 - 16 : 58; // Ícones têm largura de 32px
-        int inconxLogo = isMinimized ? sidebarWidth / 2 - 16 : 114; //ajusta a magem para o original
+        int iconX = isMinimized ? sidebarWidth / 2 - 16 : 58;
+        int inconxLogo = isMinimized ? sidebarWidth / 2 - 16 : 114;
         int iconW = isMinimized ? sidebarWidth / 2 - 8 : logoWidth;
         int iconH = isMinimized ? 60 : 34;
 
 
-        // Atualiza as posições dos ícones
         labeliconLogo.setBounds(inconxLogo, iconH, iconW, iconW);
         labeliconHome.setBounds(iconX, 170, 32, 32);
         labeliconPacientes.setBounds(iconX, 250, 32, 32);
         labeliconLogOut.setBounds(iconX, 460, 32, 32);
 
-        // Ajusta os botões para acompanhar os ícones
-
-        int buttonWidth = isMinimized ? 0 : sidebarWidth - 100; // Largura do botão no estado expandido
+        int buttonWidth = isMinimized ? 0 : sidebarWidth - 100;
 
         btnHome.setBounds(45, 170, buttonWidth, 40);
         btnPacientes.setBounds(57, 250, buttonWidth, 40);
         btnLogOut.setBounds(35, 460, buttonWidth, 40);
 
-        // Reposiciona o botão da seta
         btnSeta.setBounds(sidebarWidth - 40, 16, 32, 32);
     }
 
 
     private void toggleSidebarElements(boolean visible) {
-        // Ajusta a visibilidade dos textos dos botões, mas mantém os ícones visíveis
         btnHome.setText(visible ? "Home" : "");
         btnPacientes.setText(visible ? "Pacientes" : "");
         btnLogOut.setText(visible ? "Sair" : "");
 
-        // Os ícones permanecem visíveis
         labeliconHome.setVisible(true);
         labeliconPacientes.setVisible(true);
         labeliconLogOut.setVisible(true);
     }
 
-    // CLASSE NUMERICFILTER MOVIDA PARA FORA DO CONSTRUTOR PARA MELHOR ORGANIZAÇÃO
     public class NumericFilter extends DocumentFilter {
         @Override
         public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
             if (string == null) return;
-            if (string.matches("\\d*")) { // Permite apenas dígitos (0-9)
+            if (string.matches("\\d*")) {
                 super.insertString(fb, offset, string, attr);
             }
         }
@@ -534,14 +541,47 @@ public class Triagem extends JFrame {
         @Override
         public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
             if (text == null) return;
-            if (text.matches("\\d*")) { // Permite apenas dígitos (0-9)
+            if (text.matches("\\d*")) {
                 super.replace(fb, offset, length, text, attrs);
             }
         }
 
         @Override
         public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
-            super.remove(fb, offset, length); // Permite a remoção de caracteres
+            super.remove(fb, offset, length);
+        }
+    }
+
+    public class DoubleFilter extends DocumentFilter {
+        @Override
+        public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+            if (string == null) return;
+
+            String currentText = fb.getDocument().getText(0, fb.getDocument().getLength());
+            String newText = currentText.substring(0, offset) + string + currentText.substring(offset);
+
+            // Permite dígitos, um único ponto ou uma única vírgula
+            if (newText.matches("\\d*([.,]?\\d*)?")) {
+                super.insertString(fb, offset, string, attr);
+            }
+        }
+
+        @Override
+        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+            if (text == null) return;
+
+            String currentText = fb.getDocument().getText(0, fb.getDocument().getLength());
+            String newText = currentText.substring(0, offset) + text + currentText.substring(offset + length);
+
+            // Permite dígitos, um único ponto ou uma única vírgula
+            if (newText.matches("\\d*([.,]?\\d*)?")) {
+                super.replace(fb, offset, length, text, attrs);
+            }
+        }
+
+        @Override
+        public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
+            super.remove(fb, offset, length);
         }
     }
 
