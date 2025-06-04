@@ -24,7 +24,7 @@ public class Triagem extends JFrame {
     JLabel labelTitle;
     JLabel labelIconLine;
     JTextField inputTEMP;
-    JLabel labelInputNome;
+    JLabel labelInputCPF;
     JLabel labeliconLogo;
     JLabel labeliconHome;
     JLabel labeliconPacientes;
@@ -36,7 +36,7 @@ public class Triagem extends JFrame {
     JTextArea inputSintomas, inputObs;
     JLabel labelInputPeso, labelInputTitulo;
     JTextField inputPeso;
-    JTextField inputNome;
+    JTextField inputCPF;
     JButton btnCadastrar, btnSeta, btnHome, btnPacientes, btnLogOut;
 
     private boolean sidebarExpanded = true;
@@ -82,17 +82,17 @@ public class Triagem extends JFrame {
         labelInputTitulo.setFont(UIvariables.FONT_TITLE);
         contentPanel.add(labelInputTitulo);
 
-        labelInputNome = new JLabel("Nome:");
-        labelInputNome.setBounds(350, 135, 200, 40);
-        labelInputNome.setForeground(UIvariables.BLACK_COLOR);
-        labelInputNome.setFont(UIvariables.FONT_TITLE2);
-        contentPanel.add(labelInputNome);
+        labelInputCPF = new JLabel("CPF:");
+        labelInputCPF.setBounds(350, 135, 200, 40);
+        labelInputCPF.setForeground(UIvariables.BLACK_COLOR);
+        labelInputCPF.setFont(UIvariables.FONT_TITLE2);
+        contentPanel.add(labelInputCPF);
 
-        inputNome = new JTextField();
-        inputNome.setBounds(350, 170, 350, 40);
-        inputNome.setFont(UIvariables.FONT_INPUT);
-        inputNome.setForeground(UIvariables.BLACK_COLOR);
-        contentPanel.add(inputNome);
+        inputCPF = new JTextField();
+        inputCPF.setBounds(350, 170, 350, 40);
+        inputCPF.setFont(UIvariables.FONT_INPUT);
+        inputCPF.setForeground(UIvariables.BLACK_COLOR);
+        contentPanel.add(inputCPF);
 
 
         labelInputPeso = new JLabel("Peso (kg)");
@@ -216,7 +216,7 @@ public class Triagem extends JFrame {
 
         btnCadastrar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String Nome = inputNome.getText();
+                String cpf = inputCPF.getText();
                 String peso = inputPeso.getText();
                 String Temperatura_corpo = inputTEMP.getText();
                 String idade = inputAge.getText();
@@ -229,14 +229,14 @@ public class Triagem extends JFrame {
                     Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/dbmeditrack", "root", "admin");
 
                     // Verifica se o nome existe
-                    String sqlBusca = "SELECT * FROM paciente_ WHERE nome = ?";
+                    String sqlBusca = "SELECT * FROM paciente_ WHERE cpf = ?";
                     PreparedStatement stmtBusca = conn.prepareStatement(sqlBusca);
-                    stmtBusca.setString(1, Nome);
+                    stmtBusca.setString(1, cpf);
                     ResultSet rs = stmtBusca.executeQuery();
 
                     if (rs.next()) {
                         // Nome existe, faz o UPDATE
-                        String sqlUpdate = "UPDATE paciente_ SET peso = ?, Temperatura_corpo = ?, idade = ?, altura = ?, Alergia = ?, obs = ?, sintomas = ? WHERE Nome = ?";
+                        String sqlUpdate = "UPDATE paciente_ SET peso = ?, Temperatura_corpo = ?, idade = ?, altura = ?, Alergia = ?, obs = ?, sintomas = ? WHERE cpf = ?";
                         PreparedStatement stmtUpdate = conn.prepareStatement(sqlUpdate);
                         stmtUpdate.setString(1, peso);
                         stmtUpdate.setString(2, Temperatura_corpo);
@@ -245,13 +245,13 @@ public class Triagem extends JFrame {
                         stmtUpdate.setString(5, Alergia);
                         stmtUpdate.setString(6, obs);
                         stmtUpdate.setString(7, sintomas);
-                        stmtUpdate.setString(8, Nome);
+                        stmtUpdate.setString(8, cpf);
 
                         stmtUpdate.executeUpdate();
                         stmtUpdate.close();
 JOptionPane.showMessageDialog(null, "Informações atualizadas com sucesso!");
                     } else {
-                        System.out.println("Nome não encontrado.");
+JOptionPane.showMessageDialog(null, "CPF não encontrado.");
                     }
 
                     rs.close();
@@ -277,11 +277,17 @@ JOptionPane.showMessageDialog(null, "Informações atualizadas com sucesso!");
         labeliconPacientes.setBounds(58, 250, 32, 32);
         sidebarPanel.add(labeliconPacientes);
 
-        btnPacientes = new JButton("Cadastro");
+        btnPacientes = new JButton("Pacientes");
         btnPacientes.setBounds(23, 235, 246, 65);
         configurarBotaoSidebar(btnPacientes);
         sidebarPanel.add(btnPacientes);
 
+        btnPacientes.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new CrudTRI().setVisible(true);
+                dispose();
+            }
+        });
         btnPacientes.setBorderPainted(false); // Remove a borda
         btnPacientes.setContentAreaFilled(false); // Remove o preenchimento
         btnPacientes.setFocusPainted(false); // Remove o destaque ao focar
