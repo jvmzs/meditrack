@@ -17,8 +17,8 @@ public class ConviteService {
     // Parâmetros SMTP — preencha com os seus!
     private static final String SMTP_HOST     = "smtp.gmail.com";
     private static final String SMTP_PORT     = "587";
-    private static final String SMTP_USER     = "joao75735@gmail.com";
-    private static final String SMTP_PASSWORD = "nldn fnuf lyfv xwbr";
+    private static final String SMTP_USER     = "";
+    private static final String SMTP_PASSWORD = "";
 
     public static void enviarConvite(String email, String cpf) throws Exception {
         // 1. Gera token e define expiração
