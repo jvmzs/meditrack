@@ -100,7 +100,6 @@ public class CrudEnfermeira extends JFrame {
             JOptionPane.showMessageDialog(this, "Home sera disponivel no proximo patch.");
         });
 
-
         iconLogOut = new ImageIcon(getClass().getResource("/img/assets/icon-logOut.png"));
         labeliconLogOut = new JLabel(iconLogOut);
         labeliconLogOut.setBounds(58, 460, 32, 32);
@@ -149,9 +148,7 @@ public class CrudEnfermeira extends JFrame {
                 contentPanel.remove(comp);
             }
             if (comp instanceof JButton) {
-                // Para não remover os botões de cabeçalho da tabela caso sejam JButtons
-                // É melhor identificar os botões dinâmicos de alguma forma, por exemplo, pela posição Y
-                if (comp.getY() > 100) { // Assume que botões de cabeçalho estão acima de Y=100
+                if (comp.getY() > 100) {
                     contentPanel.remove(comp);
                 }
             }
@@ -195,7 +192,7 @@ public class CrudEnfermeira extends JFrame {
 
                 String cpfSelecionado = cpf;
                 btnEditar.addActionListener(e -> {
-                    Enfermeira enfermeiraFrame = new Enfermeira(cpfSelecionado); // Passa o CPF do paciente
+                    Enfermeira enfermeiraFrame = new Enfermeira(cpfSelecionado);
                     enfermeiraFrame.setVisible(true);
                     this.dispose();
                 });
@@ -227,7 +224,7 @@ public class CrudEnfermeira extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            CrudEnfermeira frame = new CrudEnfermeira(); // Alterado para CrudEnfermeira
+            CrudEnfermeira frame = new CrudEnfermeira();
             frame.setVisible(true);
         });
     }

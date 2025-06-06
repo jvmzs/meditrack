@@ -27,4 +27,3 @@ class RoundedPanel extends JPanel {
         g2.fillRoundRect(0, 0, getWidth(), getHeight(), arc, arc);
     }
 }
-

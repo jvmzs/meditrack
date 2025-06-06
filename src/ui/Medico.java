@@ -1,4 +1,3 @@
-// Medico.java
 package ui;
 
 import constants.UIvariables;
@@ -28,23 +27,21 @@ public class Medico extends JFrame {
     private String cpfPaciente;
     JLabel labelInputNome;
 
-    // Configurações do banco (ajuste conforme seu banco e usuário)
     private static final String DB_URL = "jdbc:mysql://localhost:3306/dbmeditrack";
-    private static final String DB_USER = "root"; // Altere para seu usuário do MySQL
-    private static final String DB_PASS = "admin"; // Altere para sua senha do MySQL
+    private static final String DB_USER = "root";
+    private static final String DB_PASS = "admin";
 
     public Medico(String cpfPaciente) {
         this.cpfPaciente = cpfPaciente;
 
-        setTitle("Médico"); // Define o título da janela.
-        setSize(1500, 800); // Define o tamanho da janela.
-        setDefaultCloseOperation(EXIT_ON_CLOSE); // Configura a operação padrão ao fechar a janela.
-        setResizable(false); // Impede que a janela seja redimensionada.
-        setLocationRelativeTo(null); // Centraliza a janela na tela.
-        setLayout(null); // Usa layout nulo para posicionamento manual dos componentes.
-        getContentPane().setBackground(UIvariables.BACKGROUND_RECEPCIONISTA_FRAME); // Define a cor de fundo do painel de conteúdo.
+        setTitle("Médico");
+        setSize(1500, 800);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setResizable(false);
+        setLocationRelativeTo(null);
+        setLayout(null);
+        getContentPane().setBackground(UIvariables.BACKGROUND_RECEPCIONISTA_FRAME);
 
-        // Configurações visuais globais para OptionPane e botões.
         UIManager.put("OptionPane.messageFont", new Font("Poppins", Font.BOLD, 15));
         UIManager.put("OptionPane.messageForeground", UIvariables.BLACK_COLOR);
         UIManager.put("OptionPane.background", Color.WHITE);
@@ -52,27 +49,24 @@ public class Medico extends JFrame {
         UIManager.put("Button.background", UIvariables.BACKGROUND_PANEL_BLUE);
         UIManager.put("Button.foreground", UIvariables.WHITE_COLOR);
 
-        // Ícone da janela.
         iconLogo = new ImageIcon(getClass().getResource("../img/img-logo.png"));
         if (iconLogo != null) setIconImage(iconLogo.getImage());
 
-        contentPanel = new JPanel(); // Cria o painel de conteúdo principal.
-        contentPanel.setBounds(100, 42, 1300, 670); // Define a posição e tamanho do painel de conteúdo.
-        contentPanel.setBackground(UIvariables.WHITE_COLOR); // Define a cor de fundo do painel de conteúdo.
-        contentPanel.setLayout(null); // Usa layout nulo para o painel de conteúdo.
-        add(contentPanel); // Adiciona o painel de conteúdo ao frame.
+        contentPanel = new JPanel();
+        contentPanel.setBounds(100, 42, 1300, 670);
+        contentPanel.setBackground(UIvariables.WHITE_COLOR);
+        contentPanel.setLayout(null);
+        add(contentPanel);
 
-        labelInputNome = new JLabel(); // Cria o label para o nome do paciente.
-        labelInputNome.setBounds(350, 130, 400, 40); // Define a posição e tamanho do label.
-        labelInputNome.setForeground(UIvariables.BLACK_COLOR); // Define a cor do texto do label.
-        labelInputNome.setFont(UIvariables.FONT_TITLE2); // Define a fonte do texto do label.
-        contentPanel.add(labelInputNome); // Adiciona o label ao painel de conteúdo.
+        labelInputNome = new JLabel();
+        labelInputNome.setBounds(350, 130, 400, 40);
+        labelInputNome.setForeground(UIvariables.BLACK_COLOR);
+        labelInputNome.setFont(UIvariables.FONT_TITLE2);
+        contentPanel.add(labelInputNome);
 
-        // Busca nome paciente no banco e atualiza label.
         String nomePaciente = buscarNomePacientePorCpf(cpfPaciente);
         labelInputNome.setText("Nome: " + nomePaciente);
 
-        // Linhas decorativas.
         iconLine = new ImageIcon(getClass().getResource("/img/assets/icon-line.png"));
         labelIconLine = new JLabel(iconLine);
         labelIconLine.setBounds(270, 100, 1019, 32);
@@ -82,13 +76,12 @@ public class Medico extends JFrame {
         labelIconLine.setBounds(270, 530, 1019, 32);
         contentPanel.add(labelIconLine);
 
-        ENFPanel = new RoundedPanel(30); // Cria um painel arredondado para inputs.
-        ENFPanel.setBounds(361, 200, 330, 315); // Define a posição e tamanho.
-        ENFPanel.setBackground(UIvariables.COLOR_ENFPanel); // Define a cor de fundo.
-        ENFPanel.setLayout(null); // Usa layout nulo.
-        contentPanel.add(ENFPanel); // Adiciona ao painel de conteúdo.
+        ENFPanel = new RoundedPanel(30);
+        ENFPanel.setBounds(361, 200, 330, 315);
+        ENFPanel.setBackground(UIvariables.COLOR_ENFPanel);
+        ENFPanel.setLayout(null);
+        contentPanel.add(ENFPanel);
 
-        // Componentes para Peso.
         labelInputPeso = new JLabel("Peso:");
         labelInputPeso.setBounds(40, 30, 80, 40);
         labelInputPeso.setForeground(UIvariables.BLACK_COLOR);
@@ -101,7 +94,6 @@ public class Medico extends JFrame {
         inputPeso.setForeground(UIvariables.BLACK_COLOR);
         ENFPanel.add(inputPeso);
 
-        // Componentes para Concentração (Prescrição).
         labelInputPres = new JLabel("Concentração");
         labelInputPres.setBounds(40, 95, 110, 40);
         labelInputPres.setForeground(UIvariables.BLACK_COLOR);
@@ -120,7 +112,6 @@ public class Medico extends JFrame {
         inputPres.setForeground(UIvariables.BLACK_COLOR);
         ENFPanel.add(inputPres);
 
-        // Componentes para Dose.
         labelInputResult = new JLabel("Dose:");
         labelInputResult.setBounds(40, 165, 110, 40);
         labelInputResult.setForeground(UIvariables.BLACK_COLOR);
@@ -133,13 +124,12 @@ public class Medico extends JFrame {
         labelDoseUnidade.setFont(UIvariables.FONT_15);
         ENFPanel.add(labelDoseUnidade);
 
-        inputResult = new JTextField(); // Este campo pode ser para exibir um resultado de cálculo de dose.
+        inputResult = new JTextField();
         inputResult.setBounds(150, 170, 150, 40);
         inputResult.setFont(UIvariables.FONT_15);
         inputResult.setForeground(UIvariables.BLACK_COLOR);
         ENFPanel.add(inputResult);
 
-        // Componentes para Frequência.
         labelInpuFreq = new JLabel("Frequencia:");
         labelInpuFreq.setBounds(40, 235, 110, 40);
         labelInpuFreq.setForeground(UIvariables.BLACK_COLOR);
@@ -152,7 +142,6 @@ public class Medico extends JFrame {
         inputFreq.setForeground(UIvariables.BLACK_COLOR);
         ENFPanel.add(inputFreq);
 
-        // Componentes para Hipótese Diagnóstica (Diagnóstico).
         labelInputOBS = new JLabel("Hipotese Diagnostica:");
         labelInputOBS.setBounds(770, 260, 380, 40);
         labelInputOBS.setForeground(UIvariables.BLACK_COLOR);
@@ -168,10 +157,8 @@ public class Medico extends JFrame {
         scrollObs.setBounds(770, 305, 400, 150);
         contentPanel.add(scrollObs);
 
-        // Carrega os dados existentes do paciente ao inicializar a tela.
         carregarDadosPaciente(cpfPaciente);
 
-        // Botão Finalizar (Atualizar Dados).
         btnCadastrar = new JButton("Finalizar");
         btnCadastrar.setBounds(1100, 580, 150, 60);
         btnCadastrar.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
@@ -186,27 +173,23 @@ public class Medico extends JFrame {
                 btnCadastrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
         });
-        // Adiciona o ActionListener para atualizar os dados do paciente.
         btnCadastrar.addActionListener(e -> {
             atualizarDadosPaciente();
         });
         contentPanel.add(btnCadastrar);
 
-        // Sidebar Panel.
         sidebarPanel = new JPanel();
         sidebarPanel.setBounds(0, 0, 280, 670);
         sidebarPanel.setBackground(UIvariables.COLOR_SIDEBAR);
         sidebarPanel.setLayout(null);
         contentPanel.add(sidebarPanel);
 
-        // Logo na sidebar.
         iconLogo = new ImageIcon(getClass().getResource("../img/img-logo.png"));
         Image scalediconLogo = iconLogo.getImage().getScaledInstance(54, 54, Image.SCALE_SMOOTH);
         labeliconLogo = new JLabel(new ImageIcon(scalediconLogo));
         labeliconLogo.setBounds(114, 34, 54, 54);
         sidebarPanel.add(labeliconLogo);
 
-        // Botão Home na sidebar.
         iconHome = new ImageIcon(getClass().getResource("/img/assets/icon-home.png"));
         labeliconHome = new JLabel(iconHome);
         labeliconHome.setBounds(58, 170, 32, 32);
@@ -235,10 +218,8 @@ public class Medico extends JFrame {
                 btnHome.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
             }
         });
-        // Ação para o botão Home (exemplo: navegar para a tela principal).
         sidebarPanel.add(btnHome);
 
-        // Botão Pacientes na sidebar.
         iconPacientes = new ImageIcon(getClass().getResource("/img/assets/icon-pacientes.png"));
         labeliconPacientes = new JLabel(iconPacientes);
         labeliconPacientes.setBounds(58, 250, 32, 32);
@@ -250,10 +231,9 @@ public class Medico extends JFrame {
         sidebarPanel.add(btnPacientes);
 
         btnPacientes.addActionListener(e -> {
-            // Navega para a tela CrudMedico.
             CrudMedico crud = new CrudMedico();
             crud.setVisible(true);
-            SwingUtilities.getWindowAncestor(btnPacientes).dispose(); // Fecha a tela atual.
+            SwingUtilities.getWindowAncestor(btnPacientes).dispose();
         });
 
         btnPacientes.setBorderPainted(false);
@@ -272,7 +252,6 @@ public class Medico extends JFrame {
             }
         });
 
-        // Botão Sair na sidebar.
         iconLogOut = new ImageIcon(getClass().getResource("/img/assets/icon-logOut.png"));
         labeliconLogOut = new JLabel(iconLogOut);
         labeliconLogOut.setBounds(58, 460, 32, 32);
@@ -296,15 +275,11 @@ public class Medico extends JFrame {
                 btnLogOut.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
             }
         });
-        // Ação para o botão Sair (exemplo: navegar para a tela de login).
         btnLogOut.addActionListener(e -> {
             JOptionPane.showMessageDialog(this, "Deslogar (a ser implementado, ex: new LoginScreen().setVisible(true)).");
-            // Exemplo: new LoginFrame().setVisible(true);
-            // dispose();
         });
         sidebarPanel.add(btnLogOut);
 
-        // Título da tela.
         labelInputTitulo = new JLabel("Médico");
         labelInputTitulo.setBounds(350, 40, 350, 40);
         labelInputTitulo.setForeground(UIvariables.BLACK_COLOR);
@@ -312,11 +287,6 @@ public class Medico extends JFrame {
         contentPanel.add(labelInputTitulo);
     }
 
-    /**
-     * Busca o nome do paciente no banco de dados pelo CPF.
-     * @param cpf O CPF do paciente.
-     * @return O nome do paciente, ou "Paciente não encontrado" se não for localizado.
-     */
     private String buscarNomePacientePorCpf(String cpf) {
         String nome = "Paciente não encontrado";
         Connection conn = null;
@@ -324,16 +294,16 @@ public class Medico extends JFrame {
         ResultSet rs = null;
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver"); // Carrega o driver JDBC do MySQL.
-            conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS); // Estabelece a conexão com o banco.
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
 
-            String sql = "SELECT nome FROM paciente_ WHERE cpf = ?"; // Query SQL para buscar o nome.
+            String sql = "SELECT nome FROM paciente_ WHERE cpf = ?";
             stmt = conn.prepareStatement(sql);
-            stmt.setString(1, cpf); // Define o parâmetro CPF.
+            stmt.setString(1, cpf);
 
-            rs = stmt.executeQuery(); // Executa a query.
+            rs = stmt.executeQuery();
             if (rs.next()) {
-                nome = rs.getString("nome"); // Obtém o nome do resultado.
+                nome = rs.getString("nome");
             }
 
         } catch (ClassNotFoundException e) {
@@ -343,16 +313,11 @@ public class Medico extends JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Erro ao conectar ou buscar paciente: " + e.getMessage(), "Erro de Banco de Dados", JOptionPane.ERROR_MESSAGE);
         } finally {
-            closeResources(conn, stmt, rs); // Fecha os recursos do banco de dados.
+            closeResources(conn, stmt, rs);
         }
         return nome;
     }
 
-    /**
-     * Carrega os dados existentes do paciente (peso, prescricao, diagnostico, frequencia)
-     * e preenche os campos da interface.
-     * @param cpf O CPF do paciente.
-     */
     private void carregarDadosPaciente(String cpf) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -371,7 +336,6 @@ public class Medico extends JFrame {
                 inputObs.setText(rs.getString("diagnostico"));
                 inputFreq.setText(rs.getString("frequencia"));
             } else {
-                // Inicializa os campos se os dados do paciente não forem encontrados
                 inputPeso.setText("");
                 inputPres.setText("");
                 inputObs.setText("");
@@ -389,9 +353,6 @@ public class Medico extends JFrame {
         }
     }
 
-    /**
-     * Atualiza os dados do paciente (peso, prescricao, diagnostico, frequencia) no banco de dados.
-     */
     private void atualizarDadosPaciente() {
         String pesoStr = inputPeso.getText().trim();
         String diagnostico = inputObs.getText().trim();
@@ -401,8 +362,6 @@ public class Medico extends JFrame {
         String dose = inputResult.getText().trim();
 
 
-
-        // Validação de campos vazios.
         if (pesoStr.isEmpty() || diagnostico.isEmpty() || concentracao.isEmpty() || prescricao.isEmpty() || dose.isEmpty() || frequencia.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Por favor, preencha todos os campos: Peso, Concentração, Frequência e Hipótese Diagnóstica.", "Campos Vazios", JOptionPane.WARNING_MESSAGE);
             return;
@@ -410,7 +369,7 @@ public class Medico extends JFrame {
 
         double peso;
         try {
-            peso = Double.parseDouble(pesoStr); // Tenta converter o peso para double.
+            peso = Double.parseDouble(pesoStr);
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "O campo 'Peso' deve ser um número válido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
             return;
@@ -433,7 +392,7 @@ public class Medico extends JFrame {
             stmt.setString(6, prescricao);
             stmt.setString(7, cpfPaciente);
 
-            int rowsAffected = stmt.executeUpdate(); // Executa a atualização.
+            int rowsAffected = stmt.executeUpdate();
 
             if (rowsAffected > 0) {
                 JOptionPane.showMessageDialog(this, "Dados do paciente atualizados com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
@@ -458,16 +417,10 @@ public class Medico extends JFrame {
             new CrudMedico().setVisible(true);
             dispose();
 
-            closeResources(conn, stmt, null); // Fecha os recursos.
+            closeResources(conn, stmt, null);
         }
     }
 
-    /**
-     * Fecha os recursos do banco de dados (Connection, PreparedStatement, ResultSet).
-     * @param conn A conexão.
-     * @param stmt O statement.
-     * @param rs O ResultSet.
-     */
     private void closeResources(Connection conn, PreparedStatement stmt, ResultSet rs) {
         try {
             if (rs != null) rs.close();
@@ -479,9 +432,7 @@ public class Medico extends JFrame {
         }
     }
 
-    // Main method para testar a interface.
     public static void main(String[] args) {
-        // Exemplo de uso: substitua "123.456.789-00" por um CPF válido do seu banco de dados.
         SwingUtilities.invokeLater(() -> new Medico("123.456.789-00").setVisible(true));
     }
 }

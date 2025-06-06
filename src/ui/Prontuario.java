@@ -155,6 +155,6 @@ public class Prontuario extends JFrame {
     }
 
     public static void main(String[] args) {
-        new Prontuario("47100065652"); // substitua pelo CPF desejado
+        new Prontuario("47100065652");
     }
 }
