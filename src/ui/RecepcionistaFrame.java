@@ -92,6 +92,15 @@ public class RecepcionistaFrame extends JFrame {
         btnHome.setBounds(70, 170, 120, 40);
         btnHome.setFont(UIvariables.FONT_INPUT_RECEPCIONISTA);
         btnHome.setForeground(UIvariables.WHITE_COLOR);
+<<<<<<< HEAD
+=======
+        btnHome.addActionListener(e -> {
+            dispose();
+            new RecepcionistaFrame();
+        });
+
+
+>>>>>>> 5960a5e (primeiro commit)
 
         //remover a estilização do botão
         btnHome.setBorderPainted(false); // Remove a borda
@@ -345,7 +354,10 @@ public class RecepcionistaFrame extends JFrame {
                         int linhasAfetadas = pstmt.executeUpdate();
 
                         if (linhasAfetadas > 0) {
+<<<<<<< HEAD
                             System.out.println("Paciente cadastrado com sucesso!");
+=======
+>>>>>>> 5960a5e (primeiro commit)
                             JOptionPane.showMessageDialog(RecepcionistaFrame.this, // Use 'this' se estiver dentro da classe RecepcionistaFrame
                                     "Paciente cadastrado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 

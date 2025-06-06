@@ -212,6 +212,7 @@ public class LoginFrame extends JFrame {
                         if (isMedico) {
                             //tela do medico
                             System.out.println("Sou Medico");
+<<<<<<< HEAD
                         } else if (isRecepcionista) {
                             new RecepcionistaFrame();
                         } else if (isEnfermeiro) {
@@ -224,6 +225,27 @@ public class LoginFrame extends JFrame {
                             new FuncionarioFrame();
                         }
 
+=======
+                            new CrudMedico().setVisible(true);
+                            dispose();
+
+                        } else if (isRecepcionista) {
+                            new RecepcionistaFrame().setVisible(true);
+                            System.out.println("Sou recepcionista");
+                            dispose();
+                        } else if (isEnfermeiro) {
+                            new CrudEnfermeira().setVisible(true);
+                            dispose();
+                            System.out.println("Sou enfermeiro");
+                        } else if (isEnfermeiroTriagem) {
+                            new Triagem().setVisible(true);
+                            dispose();
+                            System.out.println("Sou enfermeiro de triagem");
+                        } else if(isRH){
+                            new FuncionarioFrame().setVisible(true);
+                            dispose();
+                        }
+>>>>>>> 5960a5e (primeiro commit)
                     } else {
                         System.out.println("Senha ou nome incorretos.");
                         cpfField.setBorder(BorderFactory.createLineBorder(UIvariables.ERROR_COLOR, 2));
